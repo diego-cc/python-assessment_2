@@ -1,9 +1,10 @@
 """
 Project: python-assessment_2
 Author: Diego C. <20026893@tafe.wa.edu.au>
-Created at: 08/10/2020 10:34 am
-File: utils.py
+Created at: 08/10/2020 1:39 pm
+File: __init__.py
 """
+import math
 from typing import List
 
 
@@ -35,3 +36,29 @@ def parse_data(path: str) -> List[int]:
     except OSError as err:
         print("Could not open data file\n")
         raise err
+
+
+def get_num_of_digits(num: int) -> int:
+    """Calculates the number of digits of `num`
+
+    :param num: Number to be evaluated
+    :return: Number of digits of num
+    """
+    if num > 0:
+        num_of_digits = int(math.log10(num)) + 1
+    elif num == 0:
+        num_of_digits = 1
+    else:
+        num_of_digits = int(math.log10(-num)) + 2
+
+    return num_of_digits
+
+
+def get_digit(num: int, pos: int = 0) -> int:
+    """Retrieves a digit of `num` at position `pos`
+
+    :param num: 
+    :param pos:
+    :return:
+    """
+    return num // 10 ** pos % 10
