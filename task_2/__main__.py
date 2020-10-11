@@ -11,7 +11,9 @@ parsed_data = parse_data("data/sample_data.txt")
 sl = SteamAndLeaf(parsed_data)
 
 sl.sort_data()
-print(sl.data)
-print(sl.data[30])
-print(SteamAndLeaf.get_stem(sl.data[30]))
-print(SteamAndLeaf.get_leaf(sl.data[30]))
+
+last_num_stem = sl.get_stem(sl.data[len(sl.data) - 1])
+
+stem_entry = sl.generate_hash(stem=last_num_stem)
+print(f'Stem entry:\n')
+print(stem_entry)

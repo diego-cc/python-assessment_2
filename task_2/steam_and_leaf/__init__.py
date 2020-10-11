@@ -7,6 +7,9 @@ File: __init__.py
 from typing import List
 from sorting import heap_sort
 from utils import get_digit, get_num_of_digits
+from models import Stem
+from hashlib import blake2b
+import os
 
 
 class SteamAndLeaf:
@@ -29,7 +32,7 @@ class SteamAndLeaf:
         self.__data = heap_sort(self.__data, start, end)
 
     @staticmethod
-    def get_leaf(num: int):
+    def get_leaf(num: int) -> int:
         """Retrieves the last digit of a number as the leaf
 
         :param num: Number to be evaluated
@@ -38,7 +41,7 @@ class SteamAndLeaf:
         return num % 10
 
     @staticmethod
-    def get_stem(num: int):
+    def get_stem(num: int) -> List[int]:
         """Returns a list containing all digits of a number except the last one as the stem.
         If `num` only contains one digit, it returns an empty list
 
@@ -52,6 +55,23 @@ class SteamAndLeaf:
             stem.append(get_digit(num, i))
 
         return stem
+
+    def generate_hash(self, stem: List[int], stem_lookup_path: str = "data/stem_lookup.txt") -> Stem:       
+        # generate salt 
+        salt = os.urandom(blake2b.SALT_SIZE)
+
+        # generate hash
+        h = blake2b(bytearray(stem), salt=salt)
+        hash_str = h.hexdigest()
+
+        stem_entry = Stem(data=stem, hash=hash_str, salt=salt)
+        # write to file
+        with open(file=stem_lookup_path, encoding="utf8", mode="a+") as stem_lookup_file:           
+            stem_lookup_file.write(str(stem_entry))
+            stem_lookup_file.write('\n')
+            print(f'Hashed and wrote {stem_entry.data} to {stem_lookup_path}')
+
+        return stem_entry 
 
     def print_diagram(self):
         """Prints a graphical representation of this stem-and-leaf diagram

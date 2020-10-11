@@ -57,7 +57,7 @@ def get_num_of_digits(num: int) -> int:
 def get_digit(num: int, pos: int = 0) -> int:
     """Retrieves a digit of `num` at position `pos`
 
-    :param num: 
+    :param num:
     :param pos:
     :return:
     """
