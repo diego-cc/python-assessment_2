@@ -1,1 +1,1 @@
-from .stem import Stem
+from .hash_data import HashData
