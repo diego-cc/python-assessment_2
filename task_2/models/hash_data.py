@@ -8,10 +8,11 @@ from typing import List
 
 
 class HashData:
-    def __init__(self, data: List[int], hash_str: str, salt: bytes):
+    def __init__(self, data: int, hash_str: str, salt: bytes = None, key: bytes = None):
         self.__data = data
         self.__hash = hash_str
         self.__salt = salt
+        self.__key = key
 
     @property
     def data(self):
@@ -25,5 +26,9 @@ class HashData:
     def salt(self):
         return self.__salt
 
+    @property
+    def key(self):
+        return self.__key
+
     def __str__(self):
-        return f'{self.data} {self.hash} {self.salt}'
+        return f'{self.data} {self.hash} {self.salt} {self.key}'

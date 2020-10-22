@@ -6,16 +6,19 @@ File: __main__.py
 """
 import sys
 
+# For some reason, PyCharm complains that the copy module is not found
+# It does exist natively in Python though
+# See: https://docs.python.org/3/library/copy.html
+import copy
+
 from steam_and_leaf import StemAndLeaf
 from utils import parse_data
 
 
-def init_program():
+def init():
     parsed_data = parse_data("data/sample_data.txt")
 
     diagram = StemAndLeaf(data=parsed_data)
-    sorted_data = diagram.sort_data()
-    diagram.data = sorted_data
 
     print()
     print('This program handles hashing, searching, sorting and printing stem-and-leaf diagrams.')
@@ -24,9 +27,9 @@ def init_program():
         'You may add your own data set by inserting numbers separated by single spaces, as represented in the text '
         'file.')
 
-    user_input = ''
+    user_input = 'Here come the inputs...'
 
-    while user_input != 'q':
+    while user_input:
         print()
         print('Choose an option below and press Enter:')
         print('(Leave the input blank or enter anything else to quit the program)')
@@ -38,21 +41,30 @@ def init_program():
         user_input = input('Option chosen: ')
         print()
         if user_input == '1':
-            diagram.print()
+            temp_diagram = copy.deepcopy(diagram)
+            temp_diagram.data = temp_diagram.sort_data()
+            temp_diagram.hash_entries = temp_diagram.hash_all_entries()
+
+            temp_diagram.print()
         elif user_input == '2':
             print('Maximise your terminal window to visualise the table below')
             diagram.print_hashes()
         elif user_input == '3':
             search_query = input('Number to search for: ')
             try:
+                print()
                 parsed_search_query = int(search_query)
+
                 found_entry = diagram.search(parsed_search_query)
+
                 if found_entry:
                     print('Entry found:')
-                    print(f'Number: {"".join(map(str, found_entry.data))}')
+                    print(f'Number: {found_entry.data}')
                     print(f'Hash: {found_entry.hash}')
+                    print()
                 else:
                     print(f'{search_query} was not found')
+                    print()
             except ValueError:
                 print('Invalid search query. Please enter a valid number and try again.')
         else:
@@ -61,4 +73,4 @@ def init_program():
 
 
 if __name__ == "__main__":
-    init_program()
+    init()
