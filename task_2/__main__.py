@@ -22,7 +22,7 @@ def init():
 
     print()
     print('This program handles hashing, searching, sorting and printing stem-and-leaf diagrams.')
-    print('The data set being used is available in the data/sample_data.text file.')
+    print('The data set being used is available in the data/sample_data.txt file.')
     print(
         'You may add your own data set by inserting numbers separated by single spaces, as represented in the text '
         'file.')
