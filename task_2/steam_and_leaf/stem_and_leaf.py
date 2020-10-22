@@ -4,9 +4,17 @@ Author: Diego C. <20026893@tafe.wa.edu.au>
 Created at: 21/10/2020 7:20 pm
 File: stem_and_leaf.py
 """
-from typing import List, TypedDict, Optional, Dict
+# For some reason, PyCharm complains that the copy module is not found
+# It does exist natively in Python though
+# See: https://docs.python.org/3/library/copy.html
+import copy
+
+from typing import List, TypedDict, Optional, Dict, Union
 from sorting import heap_sort
-from utils import get_digit, get_num_of_digits, generate_hash, remove_duplicates
+from utils import get_digit, get_num_of_digits, remove_duplicates
+from hashing import generate_hash
+from collections import defaultdict
+from models import HashData
 
 
 class StemAndLeavesEntry(TypedDict):
@@ -14,38 +22,39 @@ class StemAndLeavesEntry(TypedDict):
     leaves: Optional[List[int]]
 
 
-class HashEntry(TypedDict):
-    hash: str
-    salt: bytes
-    number: int
-
-
 class StemAndLeaf:
-    """A steam-and-leaf implementation that enables visualisation of data in a diagram"""
+    """A steam-and-leaf implementation that hashes entries"""
 
     def __init__(self, data: List[int]):
         self.__data = data
         self.__hash_entries = []
         for num in self.__data:
             hash_entry = generate_hash(stem=StemAndLeaf.get_stem(num), leaf=StemAndLeaf.get_leaf(num))
-            self.__hash_entries.append(HashEntry(hash=hash_entry[0], salt=hash_entry[1], number=num))
+            stem = StemAndLeaf.get_stem(num)
+            leaf = StemAndLeaf.get_leaf(num)
+            stem.append(leaf)
+            self.__hash_entries.append(HashData(hash_str=hash_entry[0], salt=hash_entry[1], data=stem))
 
     @property
     def data(self):
         return self.__data
 
+    @data.setter
+    def data(self, new_data: List[int]):
+        self.__data = new_data
+
     @property
     def hashes(self):
         return self.__hash_entries
 
-    def sort_data(self, start: int = 0, end: int = -1):
+    def sort_data(self, start: int = 0, end: int = -1) -> List[int]:
         """
-        Sorts this instance's data in-place
+        Sorts this instance's data without modifying the original one
         :param start: Starting index from which arr will be sorted (inclusive)
         :param end: Ending index up to which arr will be sorted (exclusive)
         :return: None
         """
-        self.__data = heap_sort(self.__data, start, end)
+        return heap_sort(self.__data, start, end)
 
     @staticmethod
     def get_leaf(num: int) -> int:
@@ -77,6 +86,9 @@ class StemAndLeaf:
         return stem
 
     def get_all_stems(self) -> List[List[int]]:
+        """Gets all stems of `data`, leaving out duplicates
+        :returns: List of stems
+        """
         stems = []
         for num in self.__data:
             stem = StemAndLeaf.get_stem(num)
@@ -85,37 +97,60 @@ class StemAndLeaf:
                 stems.append(stem)
         return stems
 
-    def print(self):
-        """Prints a graphical representation of this stem-and-leaf diagram.
-        Its data is sorted before printing
+    def search(self, value: int) -> Union[HashData, None]:
+        """Searches for an entry in `data` by hashing `value` and comparing it to existing entries.
 
-        :return:
+        A binary search could also be performed here, but hashes are used instead for demonstration purposes.
+
         """
-        self.sort_data()
+        value_stem = StemAndLeaf.get_stem(value)
+        value_leaf = StemAndLeaf.get_leaf(value)
 
-        print('Stem', flush=False, end="")
-        print(' ' * 3 + '|' + ' ' * 3, flush=False, end="")
-        print('Leaf')
-        print('_' * (len('Stem') + 7 + len('Leaf')))
+        for entry in self.__hash_entries:
+            value_hash_entry = generate_hash(stem=value_stem, leaf=value_leaf, salt=entry.salt)
+            if value_hash_entry[0] == entry.hash:
+                # hashes match
+                return entry
+        return None
+
+    def print(self):
+        """Prints a graphical representation of this stem-and-leaf diagram, leaving out duplicates.
+        Its data must be sorted before printing.
+        """
+
+        print()
+        print("{:<15} {:<15}".format('Stem', 'Leaves'))
+        print('_' * (30 + len('Stem') + len('Leaves')))
         print()
 
         uniques = remove_duplicates(self.__data)
 
-        stems_and_leaves: Dict[int, List[int]] = {}
+        stems_and_leaves: Dict[int, List[int]] = defaultdict(list)
 
         for num in uniques:
             stem = StemAndLeaf.get_stem(num)
-            numeric_stem = int(''.join(map(str, stem)))
             leaf = StemAndLeaf.get_leaf(num)
+            numeric_stem = int(''.join(map(str, stem)))
 
-            if stem not in stems_and_leaves:
-                leaves = [leaf]
-                stems_and_leaves[numeric_stem] = leaves
-            else:
-                stems_and_leaves[numeric_stem].append(leaf)
+            stems_and_leaves[numeric_stem].append(leaf)
 
-        for key, value in stems_and_leaves:
-            print(key, flush=False, end="")
-            print(' ' * 3 + '|' + ' ' * 3, flush=False, end="")
-            print(value)
-            print()
+        for key, value in stems_and_leaves.items():
+            print("{:<15} {:<15}".format(key, ' '.join(map(str, value))))
+
+    def print_hashes(self):
+        """Prints all hash and salt pairs of each entry in the data available (includes ALL entries as-is,
+        unsorted and unfiltered)
+        """
+        print()
+        print("{:<15} {:<15} {:<60}".format('Stem', 'Leaf', 'Hash'))
+        print('_' * (30 + len('Stem') + len('Leaf') + len('Hash') + len(self.__hash_entries[0].hash)))
+        print()
+
+        hash_entries_copy = copy.deepcopy(self.__hash_entries)
+
+        for entry in hash_entries_copy:
+            leaf = entry.data.pop()
+            stem = int(''.join(map(str, entry.data)))
+            hash_str = entry.hash
+
+            print("{:<15} {:<15} {:<60}".format(stem, leaf, hash_str))

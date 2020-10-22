@@ -12,6 +12,10 @@ from typing import List
 def binary_search(data: List[int], value: int, start: int = 0, end: int = -1) -> int:
     """An iterative binary search implementation. Data must be sorted before running this function.
 
+    ** NOTE: Currently not being used in this application, since searching is handled by hashing numbers instead **
+
+    ** See the `search` method in stem_and_leaf.py **
+
     :param data: Initial data set (must be sorted in advance)
     :param value: Number to look for in `data`
     :param start: Optional starting index (inclusive)
