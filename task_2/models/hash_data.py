@@ -4,7 +4,6 @@ Author: Diego C. <20026893@tafe.wa.edu.au>
 Created at: 21/10/2020 7:18 pm
 File: hash_data.py
 """
-from typing import List
 
 
 class HashData:

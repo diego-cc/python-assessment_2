@@ -7,5 +7,5 @@ File: __init__.py
 from models import Stem
 from sorting import heap_sort
 from searching import binary_search
-from steam_and_leaf import SteamAndLeaf
+from stem_and_leaf import SteamAndLeaf
 from utils import get_digit, get_num_of_digits, parse_data

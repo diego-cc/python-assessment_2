@@ -4,10 +4,10 @@ Author: Diego C. <20026893@tafe.wa.edu.au>
 Created at: 22/10/2020 10:36 am
 File: hash_utils.py
 """
-from typing import List
-from models import HashData
-from hashlib import blake2b
 import os
+from hashlib import blake2b
+
+from models import HashData
 
 
 def generate_hash(num: int, salt: bytes = None, key: bytes = None, save_to_file: bool = False,

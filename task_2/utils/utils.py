@@ -66,6 +66,7 @@ def get_digit(num: int, pos: int = 0) -> int:
 
 def remove_duplicates(list_with_duplicates: List[int]) -> List[int]:
     """Removes duplicate entries in a list
+
     :param list_with_duplicates: Original list
     :returns: A new list based on the original one without duplicates
     """

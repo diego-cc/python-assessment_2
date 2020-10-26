@@ -11,7 +11,7 @@ import sys
 # See: https://docs.python.org/3/library/copy.html
 import copy
 
-from steam_and_leaf import StemAndLeaf
+from stem_and_leaf import StemAndLeaf
 from utils import parse_data
 
 

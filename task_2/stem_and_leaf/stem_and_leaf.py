@@ -18,7 +18,7 @@ class StemAndLeavesEntry(TypedDict):
 
 
 class StemAndLeaf:
-    """A steam-and-leaf implementation that hashes entries"""
+    """A stem-and-leaf implementation that hashes entries"""
 
     def __init__(self, data: List[int]):
         self.__data = data
@@ -128,11 +128,11 @@ class StemAndLeaf:
         print('_' * (30 + len('Stem') + len('Leaves')))
         print()
 
-        uniques = remove_duplicates(self.__data)
+        # uniques = remove_duplicates(self.__data)
 
         stems_and_leaves: Dict[int, List[int]] = defaultdict(list)
 
-        for num in uniques:
+        for num in self.__data:
             stem = StemAndLeaf.get_stem(num)
             leaf = StemAndLeaf.get_leaf(num)
             numeric_stem = int(''.join(map(str, stem)))
